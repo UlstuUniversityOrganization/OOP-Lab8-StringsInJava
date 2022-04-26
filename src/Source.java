@@ -24,6 +24,7 @@ public class Source {
 	private String inputStr = "";
 	private String loadPath = "input.txt";
 	private String savePath = "output.txt";
+	private boolean isReversed = false;
 	
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -113,7 +114,7 @@ public class Source {
 						inputStr = inputStr + sc.nextLine() + "\n";
 					}
 					StringBuilder stringBuilder = new StringBuilder(inputStr);
-					textArea.setText(stringBuilder.reverse().toString());
+					textArea.setText("\n" + stringBuilder.toString());
 				} catch (FileNotFoundException e1) {
 					e1.printStackTrace();
 				}
@@ -132,7 +133,7 @@ public class Source {
 				String handledStr = handleStr(inputStr, "a");
 				textArea.setText("\n" + handledStr);			
 			}});
-		btnNewButton_1.setBounds(502, 146, 89, 23);
+		btnNewButton_1.setBounds(502, 179, 89, 23);
 		frame.getContentPane().add(btnNewButton_1);
 		
 		textArea = new JTextArea();
@@ -181,5 +182,31 @@ public class Source {
 		});
 		btnUpdate.setBounds(502, 115, 85, 21);
 		frame.getContentPane().add(btnUpdate);
+		
+		JButton buttonReverse = new JButton("Reverse");
+		buttonReverse.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				isReversed = !isReversed;
+				Scanner sc;
+				try {
+					sc = new Scanner(new File(loadPath));
+					inputStr = "";
+					while(sc.hasNextLine())
+					{
+						inputStr = inputStr + sc.nextLine() + "\n";
+					}
+					StringBuilder stringBuilder = new StringBuilder(inputStr);
+					if(isReversed)
+						textArea.setText(stringBuilder.reverse().toString());
+					else
+						textArea.setText("\n" + stringBuilder.toString());
+				} catch (FileNotFoundException e1) {
+					e1.printStackTrace();
+				}			
+			}
+		});
+		buttonReverse.setBounds(502, 146, 89, 23);
+		frame.getContentPane().add(buttonReverse);
 	}
 }
