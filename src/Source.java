@@ -2,6 +2,8 @@ import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
+
 import java.awt.BorderLayout;
 import java.awt.event.ActionListener;
 import java.io.BufferedWriter;
@@ -20,6 +22,8 @@ public class Source {
 	private JFrame frame;
 	private JTextArea textArea;
 	private String inputStr = "";
+	private String loadPath = "input.txt";
+	private String savePath = "output.txt";
 	
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -93,7 +97,15 @@ public class Source {
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
-					Scanner sc = new Scanner(new File("input.txt"));
+					JFileChooser fileChooser = new JFileChooser(loadPath);
+					int returnValue = fileChooser.showOpenDialog(null);
+					
+					if(returnValue == JFileChooser.APPROVE_OPTION) {
+						File selectedFile = fileChooser.getSelectedFile();
+						loadPath = selectedFile.getAbsolutePath();
+					}	
+					
+					Scanner sc = new Scanner(new File(loadPath));
 					
 					inputStr = "";
 					while(sc.hasNextLine())
@@ -118,22 +130,56 @@ public class Source {
 			public void actionPerformed(ActionEvent e) 
 			{
 				String handledStr = handleStr(inputStr, "a");
-				textArea.setText("\n" + handledStr);
+				textArea.setText("\n" + handledStr);			
+			}});
+		btnNewButton_1.setBounds(502, 146, 89, 23);
+		frame.getContentPane().add(btnNewButton_1);
+		
+		textArea = new JTextArea();
+		textArea.setBounds(0, 0, 485, 357);
+		frame.getContentPane().add(textArea);
+		
+		JButton buttonSave = new JButton("Save");
+		buttonSave.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JFileChooser fileChooser = new JFileChooser(loadPath);
+				int returnValue = fileChooser.showSaveDialog(null);
 				
+				if(returnValue == JFileChooser.APPROVE_OPTION) {
+					File selectedFile = fileChooser.getSelectedFile();
+					savePath = selectedFile.getAbsolutePath();
+				}
 				try {
-					BufferedWriter writer = new BufferedWriter(new FileWriter("output.txt"));
-					writer.write(handledStr);
+					BufferedWriter writer = new BufferedWriter(new FileWriter(savePath));
+					writer.write(inputStr);
 					writer.close();
 				} catch (IOException e1) {
 					e1.printStackTrace();
 				}
-				
-			}});
-		btnNewButton_1.setBounds(502, 57, 89, 23);
-		frame.getContentPane().add(btnNewButton_1);
+			}
+		});
+		buttonSave.setBounds(502, 56, 89, 23);
+		frame.getContentPane().add(buttonSave);
 		
-		textArea = new JTextArea();
-		textArea.setBounds(10, 65, 475, 279);
-		frame.getContentPane().add(textArea);
+		JButton btnUpdate = new JButton("Update");
+		btnUpdate.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {				
+					Scanner sc = new Scanner(new File(loadPath));
+					
+					inputStr = "";
+					while(sc.hasNextLine())
+					{
+						inputStr = inputStr + sc.nextLine() + "\n";
+					}
+					StringBuilder stringBuilder = new StringBuilder(inputStr);
+					textArea.setText(stringBuilder.reverse().toString());
+				} catch (FileNotFoundException e1) {
+					e1.printStackTrace();
+				}
+			}
+		});
+		btnUpdate.setBounds(502, 115, 85, 21);
+		frame.getContentPane().add(btnUpdate);
 	}
 }
